@@ -14,6 +14,50 @@
 	     <channel id="TempOutside"                       typeId="TempOutside"              />
 	     <channel id="TempExhaust"                       typeId="TempExhaust"              />
 	     <channel id="TempIncomming"                     typeId="TempIncomming"              />
+	      <channel id="PowerState"                        typeId="PowerState"              />
+     <channel id="CO2AdjustState"                    typeId="CO2AdjustState"              />
+     <channel id="HumidityAdjustState"               typeId="HumidityAdjustState"              />
+     <channel id="HeatingState"                      typeId="HeatingState"              />
+     <channel id="FilterGuardIndicator"              typeId="FilterGuardIndicator"              />
+     <channel id="HeatingIndicator"                  typeId="HeatingIndicator"              />
+     <channel id="FaultIndicator"                    typeId="FaultIndicator"              />
+     <channel id="ServiceReminderIndicator"          typeId="ServiceReminderIndicator"              />
+     <channel id="Humidity"                          typeId="Humidity"              />
+     <channel id="BasicHumidityLevel"                typeId="BasicHumidityLevel"              />
+     <channel id="HumiditySensor1"                   typeId="HumiditySensor1"              />
+     <channel id="HumiditySensor2"                   typeId="HumiditySensor2"              />
+     <channel id="CO2High"                           typeId="CO2High"              />
+     <channel id="CO2Low"                            typeId="CO2Low"              />
+     <channel id="CO2SetPointHigh"                   typeId="CO2SetPointHigh"              />
+     <channel id="CO2SetPointLow"                    typeId="CO2SetPointLow"              />
+     <channel id="FanSpeedMax"                       typeId="FanSpeedMax"              />
+     <channel id="FanSpeedMin"                       typeId="FanSpeedMin"              />
+     <channel id="DCFanInputAdjustment"              typeId="DCFanInputAdjustment"              />
+     <channel id="DCFanOutputAdjustment"             typeId="DCFanOutputAdjustment"              />
+     <channel id="InputFanStopThreshold"             typeId="InputFanStopThreshold"              />
+     <channel id="HeatingSetPoint"                   typeId="HeatingSetPoint"              />
+     <channel id="PreHeatingSetPoint"                typeId="PreHeatingSetPoint"              />
+     <channel id="HrcBypassThreshold"                typeId="HrcBypassThreshold"              />
+     <channel id="CellDefrostingThreshold"           typeId="CellDefrostingThreshold"              />
+     <channel id="AdjustmentIntervalMinutes"         typeId="AdjustmentIntervalMinutes"              />
+     <channel id="AutomaticHumidityLevelSeekerState" typeId="AutomaticHumidityLevelSeekerState"              /> 
+     <channel id="BoostSwitchMode"                   typeId="BoostSwitchMode"              /> 
+     <channel id="RadiatorType"                      typeId="RadiatorType"              /> 
+     <channel id="CascadeAdjust"                     typeId="CascadeAdjust"              /> 
+     <channel id="MaxSpeedLimitMode"                 typeId="MaxSpeedLimitMode"              /> 
+     <channel id="ServiceReminder"                   typeId="ServiceReminder"              />
+     <channel id="PostHeatingOn"                     typeId="PostHeatingOn"              />
+     <channel id="DamperMotorPosition"               typeId="DamperMotorPosition"              />
+     <channel id="FaultSignalRelayClosed"            typeId="FaultSignalRelayClosed"              />
+     <channel id="SupplyFanOff"                      typeId="SupplyFanOff"              />
+     <channel id="PreHeatingOn"                      typeId="PreHeatingOn"              />
+     <channel id="ExhaustFanOff"                     typeId="ExhaustFanOff"              />
+     <channel id="FirePlaceBoosterClosed"            typeId="FirePlaceBoosterClosed"              />
+     <channel id="IncommingCurrent"                  typeId="IncommingCurrent"              />
+     <channel id="LastErrorNumber"                   typeId="LastErrorNumber"              />
+     <channel id="InEfficiency"                      typeId="InEfficiency"              />
+     <channel id="OutEfficiency"                     typeId="OutEfficiency"              />
+     <channel id="AverageEfficiency"                 typeId="AverageEfficiency"              />
     </channels>
     <config-description>
         <parameter name="host" type="text" required="true">
