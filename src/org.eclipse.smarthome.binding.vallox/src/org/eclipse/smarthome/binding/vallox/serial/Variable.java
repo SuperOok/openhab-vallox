@@ -3,7 +3,7 @@ package org.eclipse.smarthome.binding.vallox.serial;
 /**
  * Telegram identifiers. Use the key-variable for each binary
  * value.
- * 
+ *
  * @author Hauke
  *
  */
@@ -259,7 +259,7 @@ public enum Variable {
     // dummy for any key we don't know
     UNDEFINED((byte) 0x00);
 
-    final byte key;
+    public final byte key;
 
     public byte getKey() {
         return key;

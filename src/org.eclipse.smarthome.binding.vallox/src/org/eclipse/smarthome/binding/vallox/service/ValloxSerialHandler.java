@@ -3,10 +3,12 @@ package org.eclipse.smarthome.binding.vallox.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import org.eclipse.smarthome.binding.vallox.serial.Telegram;
 import org.eclipse.smarthome.binding.vallox.serial.ValloxProperty;
 import org.eclipse.smarthome.binding.vallox.serial.ValloxSerialInterface;
 import org.eclipse.smarthome.binding.vallox.serial.ValloxStore;
 import org.eclipse.smarthome.binding.vallox.serial.ValueChangeListener;
+import org.eclipse.smarthome.binding.vallox.serial.Variable;
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
@@ -73,11 +75,48 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
             ValloxProperty channelProperty = ValloxProperty.valueOf(channelUID.getId());
             if (command instanceof RefreshType) {
                 vallox.sendPoll(channelProperty);
+            } else if (command instanceof DecimalType) {
+                byte value = ((DecimalType) command).byteValue();
+                logger.debug("Setting channel {} to value {}.", channelProperty, value);
+                switch (channelProperty) {
+                    case FanSpeed:
+                        vallox.send(Variable.FAN_SPEED.key, Telegram.convertBackFanSpeed(value));
+                        break;
+                    case FanSpeedMax:
+                        vallox.send(Variable.FAN_SPEED_MAX.key, Telegram.convertBackFanSpeed(value));
+                        break;
+                    case FanSpeedMin:
+                        vallox.send(Variable.FAN_SPEED_MIN.key, Telegram.convertBackFanSpeed(value));
+                        break;
+                    case DCFanOutputAdjustment:
+                        vallox.send(Variable.DC_FAN_OUTPUT_ADJUSTMENT.key, value);
+                        break;
+                    case DCFanInputAdjustment:
+                        vallox.send(Variable.DC_FAN_INPUT_ADJUSTMENT.key, value);
+                        break;
+                    case HrcBypassThreshold:
+                        vallox.send(Variable.HRC_BYPASS.key, Telegram.convertBackTemperature(value));
+                        break;
+                    case InputFanStopThreshold:
+                        vallox.send(Variable.INPUT_FAN_STOP.key, Telegram.convertBackTemperature(value));
+                        break;
+                    case HeatingSetPoint:
+                        vallox.send(Variable.HEATING_SET_POINT.key, Telegram.convertBackTemperature(value));
+                        break;
+                    case PreHeatingSetPoint:
+                        vallox.send(Variable.PRE_HEATING_SET_POINT.key, Telegram.convertBackTemperature(value));
+                        break;
+                    case CellDefrostingThreshold:
+                        vallox.send(Variable.CELL_DEFROSTING.key, Telegram.convertBackTemperature(value));
+                        break;
+                    default:
+                        logger.warn("Trying to send set-command to read-only channel: {} Ignoring.", channelProperty);
+                        break;
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to handle command to Vallox serial interface: " + e.toString());
         }
-
     }
 
     @Override
