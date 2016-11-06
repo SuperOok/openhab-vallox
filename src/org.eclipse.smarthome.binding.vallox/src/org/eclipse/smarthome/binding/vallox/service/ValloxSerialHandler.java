@@ -80,13 +80,13 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                 logger.debug("Setting channel {} to value {}.", channelProperty, value);
                 switch (channelProperty) {
                     case FanSpeed:
-                        vallox.send(Variable.FAN_SPEED.key, Telegram.convertBackFanSpeed(value));
+                        vallox.send(Variable.FAN_SPEED.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
                         break;
                     case FanSpeedMax:
-                        vallox.send(Variable.FAN_SPEED_MAX.key, Telegram.convertBackFanSpeed(value));
+                        vallox.send(Variable.FAN_SPEED_MAX.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
                         break;
                     case FanSpeedMin:
-                        vallox.send(Variable.FAN_SPEED_MIN.key, Telegram.convertBackFanSpeed(value));
+                        vallox.send(Variable.FAN_SPEED_MIN.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
                         break;
                     case DCFanOutputAdjustment:
                         vallox.send(Variable.DC_FAN_OUTPUT_ADJUSTMENT.key, value);
@@ -291,6 +291,7 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                 logger.warn("Got update notification for unknown vallox property: {}", channel);
                 break;
         }
+        // TODO: should check whether value really has changed to reduce amount of updates
         this.updateState(channel, state);
         logger.debug("Updated state for channel {} to {}", channel, state);
     }
@@ -301,7 +302,6 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
         }
         return OnOffType.OFF;
     }
-
     // @Override
     // public Thing getThing() {
     // logger.info("getThing");

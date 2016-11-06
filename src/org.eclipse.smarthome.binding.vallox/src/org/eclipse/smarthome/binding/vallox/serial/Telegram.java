@@ -256,7 +256,7 @@ public class Telegram {
             }
 
             double outEfficiency = (vallox.tempInside - vallox.tempExhaust) * 100.0 / maxPossible;
-            if (outEfficiency != (int) outEfficiency) {
+            if (vallox.outEfficiency != (int) outEfficiency) {
                 vallox.outEfficiency = (int) outEfficiency;
                 listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.OutEfficiency));
             }

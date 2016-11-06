@@ -1,0 +1,10 @@
+sitemap demo label="Demo Sitemap" {
+	
+	Frame label="Vallox" {
+		Setpoint item=FanSpeed minValue="1" maxValue="8" step="1"
+		Setpoint item=FanSpeedMin minValue="1" maxValue="8" step="1"
+		Setpoint item=FanSpeedMax minValue="1" maxValue="8" step="1"
+	}
+	Group item=Vallox
+	Group item=ValloxAdvanced
+}
