@@ -131,44 +131,65 @@
     <channel-type id="InEfficiency" >
         <item-type>Number</item-type>
         <label>InEfficiency</label>
-        <state pattern="%d" readOnly="true"></state>
+        <state min="0" max="100" step="1" pattern="%d" readOnly="true"></state>
     </channel-type>
     
     <channel-type id="OutEfficiency">
         <item-type>Number</item-type>
         <label>OutEfficiency</label>
-        <state pattern="%d" readOnly="true"></state>
+        <state min="0" max="100" step="1" pattern="%d" readOnly="true"></state>
     </channel-type>
     
     <channel-type id="AverageEfficiency">
         <item-type>Number</item-type>
         <label>AverageEfficiency</label>
-        <state pattern="%d" readOnly="true"></state>
+        <state min="0" max="100" step="1" pattern="%d" readOnly="true"></state>
     </channel-type>
 
 	<channel-type id="PowerState">
 		<item-type>Switch</item-type>
 		<label>Power State</label>
-		<state readOnly="true"></state>
+		<state readOnly="false"></state>
 	</channel-type>
+	
+	<channel-type id="CO2AdjustState" >
+        <item-type>Switch</item-type>
+        <label>CO2 Adjust State</label>
+        <state readOnly="false"></state>
+    </channel-type>
+    
+    <channel-type id="HumidityAdjustState" >
+        <item-type>Switch</item-type>
+        <label>Humidity Adjust State</label>
+        <state readOnly="false"></state>
+    </channel-type>
+    
+    <channel-type id="HeatingState" >
+        <item-type>Switch</item-type>
+        <label>Heating State</label>
+        <state readOnly="false"></state>
+    </channel-type>                
 	
 	<!-- ADVANCED ================================================================ -->
 	
 	<channel-type id="DCFanInputAdjustment" advanced="true">
         <item-type>Number</item-type>
         <label>DCFanInputAdjustment</label>
-        <state readOnly="false"></state>
+        <description>0-100%</description>
+        <state min="0" max="255" step="1" pattern="%d" readOnly="false"></state>
     </channel-type>
     
     <channel-type id="DCFanOutputAdjustment" advanced="true">
         <item-type>Number</item-type>
         <label>DCFanOutputAdjustment</label>
-        <state readOnly="false"></state>
+        <description>0-100%</description>
+        <state min="0" max="255" step="1" pattern="%d" readOnly="false"></state>
     </channel-type>
 	
 	<channel-type id="HrcBypassThreshold" advanced="true">
         <item-type>Number</item-type>
         <label>HrcBypassThreshold</label>
+        <description>Heat recovery cell bypass setpoint temp</description>
         <category>TEMPERATURE</category>
         <state min="-20" max="40" step="0.1" pattern="%.1f °C" readOnly="false"></state>
     </channel-type>
@@ -176,6 +197,7 @@
     <channel-type id="InputFanStopThreshold" advanced="true">
         <item-type>Number</item-type>
         <label>InputFanStopThreshold</label>
+        <description>Temp threshold: fan stops if input temp falls below this temp.</description>
         <category>TEMPERATURE</category>
         <state min="-20" max="40" step="0.1" pattern="%.1f °C" readOnly="false"></state>
     </channel-type>
@@ -197,30 +219,13 @@
     <channel-type id="CellDefrostingThreshold" advanced="true">
         <item-type>Number</item-type>
         <label>CellDefrostingThreshold</label>
+        <description>Defrosting starts when exhaust air drops below this setpoint temp (Hysteresis 4)</description>
         <category>TEMPERATURE</category>
         <state min="-20" max="40" step="0.1" pattern="%.1f °C" readOnly="false"></state>
     </channel-type>
     
 	<!-- READONLY ================================================================ -->
-	
-	<channel-type id="CO2AdjustState" advanced="true">
-		<item-type>Switch</item-type>
-		<label>CO2 Adjust State</label>
-		<state readOnly="true"></state>
-	</channel-type>
-	
-	<channel-type id="HumidityAdjustState" advanced="true">
-		<item-type>Switch</item-type>
-		<label>Humidity Adjust State</label>
-		<state readOnly="true"></state>
-	</channel-type>
-	
-	<channel-type id="HeatingState" advanced="true">
-		<item-type>Switch</item-type>
-		<label>Heating State</label>
-		<state readOnly="true"></state>
-	</channel-type>
-	
+
 	<channel-type id="FilterGuardIndicator" advanced="true">
 		<item-type>Switch</item-type>
 		<label>Filter Guard Indicator</label>
@@ -248,55 +253,59 @@
 	<channel-type id="Humidity" advanced="true">
 		<item-type>Number</item-type>
 		<label>Humidity</label>
-		<state readOnly="true"></state>
+		<description>Higher measured relative humidity from sensor 1 and sensor 2. Translating Formula (x-51)/2.04; 33H = 0%, FFH = 100%</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="BasicHumidityLevel" advanced="true">
 		<item-type>Number</item-type>
 		<label>BasicHumidityLevel</label>
-		<state readOnly="true"></state>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="HumiditySensor1" advanced="true">
 		<item-type>Number</item-type>
-		<label>Filter Guard Indicator</label>
-		<state readOnly="true"></state>
+		<label>HumiditySensor1</label>
+		<description>Relative Humidity measured from sensor 1. Translating Formula (x-51)/2.04; 33H = 0%, FFH = 100%</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="HumiditySensor2" advanced="true">
 		<item-type>Number</item-type>
-		<label>HumiditySensor1</label>
-		<state readOnly="true"></state>
+		<label>HumiditySensor2</label>
+		<description>Relative Humidity measured from sensor 2. Translating Formula (x-51)/2.04; 33H = 0%, FFH = 100%</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="CO2High" advanced="true">
 		<item-type>Number</item-type>
 		<label>CO2High</label>
-		<state readOnly="true"></state>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="CO2Low" advanced="true">
 		<item-type>Number</item-type>
 		<label>CO2Low</label>
-		<state readOnly="true"></state>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="CO2SetPointHigh" advanced="true">
 		<item-type>Number</item-type>
 		<label>CO2SetPointHigh</label>
-		<state readOnly="true"></state>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="CO2SetPointLow" advanced="true">
 		<item-type>Number</item-type>
 		<label>CO2SetPointLow</label>
-		<state readOnly="true"></state>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 
 	<channel-type id="AdjustmentIntervalMinutes" advanced="true">
 		<item-type>Number</item-type>
 		<label>AdjustmentIntervalMinutes</label>
-		<state readOnly="true"></state>
+		<description>set adjustment interval of CO2 and %RH in minutes (Regelinterval)</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="AutomaticHumidityLevelSeekerState" advanced="true">
@@ -308,12 +317,14 @@
 	<channel-type id="BoostSwitchMode" advanced="true">
 		<item-type>Switch</item-type>
 		<label>BoostSwitchMode</label>
+		<description>boost switch mode (ON=boost, OFF = fireplace)</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="RadiatorType" advanced="true">
 		<item-type>Switch</item-type>
 		<label>RadiatorType</label>
+		<description>radiator type (0 electric, 1 water)</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
@@ -326,13 +337,15 @@
 	<channel-type id="MaxSpeedLimitMode" advanced="true">
 		<item-type>Switch</item-type>
 		<label>MaxSpeedLimitMode</label>
+		<description>Function of max speed limit (0 = with adjustment, 1 = always)</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="ServiceReminder" advanced="true">
 		<item-type>Number</item-type>
 		<label>ServiceReminder</label>
-		<state readOnly="true"></state>
+		<description>Service Reminder in months; informs about the next maintenance alarm time: remaining months, descending.</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="PostHeatingOn" advanced="true">
@@ -344,51 +357,57 @@
 	<channel-type id="DamperMotorPosition" advanced="true">
 		<item-type>Switch</item-type>
 		<label>DamperMotorPosition</label>
+		<description>Damper Motor Position - OFF=winter ON=season</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="FaultSignalRelayClosed" advanced="true">
 		<item-type>Switch</item-type>
 		<label>FaultSignalRelayClosed</label>
+		<description>fault signal relay closed - OFF=open ON=closed</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="SupplyFanOff" advanced="true">
 		<item-type>Switch</item-type>
 		<label>SupplyFanOff</label>
+		<description>supply fan off - OFF=on ON=off</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="PreHeatingOn" advanced="true">
 		<item-type>Switch</item-type>
 		<label>PreHeatingOn</label>
+		<description>pre-heating - OFF=off ON=on</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="ExhaustFanOff" advanced="true">
 		<item-type>Switch</item-type>
 		<label>ExhaustFanOff</label>
+		<description>exhaust-fan off - OFF=on ON=off</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="FirePlaceBoosterClosed" advanced="true">
 		<item-type>Switch</item-type>
 		<label>FirePlaceBoosterClosed</label>
+		<description>fireplace-booster closed - OFF=open ON=closed</description>
 		<state readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="IncommingCurrent" advanced="true">
 		<item-type>Number</item-type>
 		<label>IncommingCurrent</label>
-		<state readOnly="true"></state>
+		<description>Current/Voltage in mA incomming on machine</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
 	
 	<channel-type id="LastErrorNumber" advanced="true">
 		<item-type>Number</item-type>
 		<label>LastErrorNumber</label>
-		<state readOnly="true"></state>
+		<description>  5: Supply air temperature sensor fault; 6: Carbon dioxide alarm; 7: Outdoor air sensor fault;
+		8: Extract air sensor fault; 9: Water radiator danger of freezing; 10: Exhaust air sensor fault</description>
+		<state min="0" max="255" step="1" pattern="%d" readOnly="true"></state>
 	</channel-type>
-	
-
-
 </thing:thing-descriptions>

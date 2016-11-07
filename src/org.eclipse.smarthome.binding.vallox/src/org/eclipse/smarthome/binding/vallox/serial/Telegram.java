@@ -53,19 +53,19 @@ public class Telegram {
             vallox.firePlaceBoosterClosed = (value & 0x40) != 0;
             // *pUnknown2 = (value & 0x80) != 0;
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.DamperMotorPosition));
-            listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FaultSignalRelay));
+            listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FaultSignalRelayClosed));
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.SupplyFanOff));
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.PreHeatingOn));
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.ExhaustFanOff));
-            listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FirePlaceBoosterOn));
+            listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FirePlaceBoosterClosed));
         } else if (variable == Variable.INSTALLED_CO2_SENSORS.key) {
             // TODO
             // convertInstalledCO2Sensor
         } else if (variable == Variable.CURRENT_INCOMMING.key) {
-            vallox.incommingCurrent = value;
+            vallox.incommingCurrent = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.IncommingCurrent));
         } else if (variable == Variable.LAST_ERROR_NUMBER.key) {
-            vallox.lastErrorNumber = value;
+            vallox.lastErrorNumber = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.LastErrorNumber));
         } else if (variable == Variable.POST_HEATING_ON_COUNTER.key) {
             // TODO
@@ -144,28 +144,28 @@ public class Telegram {
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FaultIndicator));
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.ServiceReminderIndicator));
         } else if (variable == Variable.HUMIDITY.key) {
-            vallox.humidity = value;
+            vallox.humidity = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.Humidity));
         } else if (variable == Variable.BASIC_HUMIDITY_LEVEL.key) {
-            vallox.basicHumidityLevel = value;
+            vallox.basicHumidityLevel = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.BasicHumidityLevel));
         } else if (variable == Variable.HUMIDITY_SENSOR1.key) {
-            vallox.humiditySensor1 = value;
+            vallox.humiditySensor1 = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.HumiditySensor1));
         } else if (variable == Variable.HUMIDITY_SENSOR2.key) {
-            vallox.humiditySensor2 = value;
+            vallox.humiditySensor2 = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.HumiditySensor2));
         } else if (variable == Variable.CO2_HIGH.key) {
-            vallox.cO2High = value;
+            vallox.cO2High = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.CO2High));
         } else if (variable == Variable.CO2_LOW.key) {
-            vallox.cO2Low = value;
+            vallox.cO2Low = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.CO2Low));
         } else if (variable == Variable.CO2_SET_POINT_UPPER.key) {
-            vallox.cO2SetPointHigh = value;
+            vallox.cO2SetPointHigh = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.CO2SetPointHigh));
         } else if (variable == Variable.CO2_SET_POINT_LOWER.key) {
-            vallox.cO2SetPointLow = value;
+            vallox.cO2SetPointLow = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.CO2SetPointLow));
         } else if (variable == Variable.FAN_SPEED_MAX.key) {
             vallox.fanSpeedMax = convertFanSpeed(value);
@@ -174,10 +174,10 @@ public class Telegram {
             vallox.fanSpeedMin = convertFanSpeed(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.FanSpeedMin));
         } else if (variable == Variable.DC_FAN_OUTPUT_ADJUSTMENT.key) {
-            vallox.dCFanOutputAdjustment = value;
+            vallox.dCFanOutputAdjustment = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.DCFanOutputAdjustment));
         } else if (variable == Variable.DC_FAN_INPUT_ADJUSTMENT.key) {
-            vallox.dCFanInputAdjustment = value;
+            vallox.dCFanInputAdjustment = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.DCFanInputAdjustment));
         } else if (variable == Variable.INPUT_FAN_STOP.key) {
             vallox.inputFanStopThreshold = convertTemperature(value);
@@ -230,7 +230,7 @@ public class Telegram {
             vallox.maxSpeedLimitMode = (value & 0x01) != 0;
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.MaxSpeedLimitMode));
         } else if (variable == Variable.SERVICE_REMINDER.key) {
-            vallox.serviceReminder = value;
+            vallox.serviceReminder = Byte.toUnsignedInt(value);
             listener.stream().forEach(l -> l.notifyChanged(ValloxProperty.ServiceReminder));
         } else if (variable == Variable.UNKNOWN.key) {
             // do nothing;
@@ -270,7 +270,7 @@ public class Telegram {
     }
 
     public static byte convertTemperature(byte value) {
-        int index = value & 0xff;
+        int index = Byte.toUnsignedInt(value);
         return ValloxProtocol.TEMPERATURE_MAPPING[index];
     }
 

@@ -74,19 +74,22 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
         try {
             ValloxProperty channelProperty = ValloxProperty.valueOf(channelUID.getId());
             if (command instanceof RefreshType) {
-                vallox.sendPoll(channelProperty);
+                synchronized (this) {
+                    vallox.sendPoll(channelProperty);
+                    Thread.sleep(200);
+                }
             } else if (command instanceof DecimalType) {
                 byte value = ((DecimalType) command).byteValue();
                 logger.debug("Setting channel {} to value {}.", channelProperty, value);
                 switch (channelProperty) {
                     case FanSpeed:
-                        vallox.send(Variable.FAN_SPEED.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
+                        vallox.send(Variable.FAN_SPEED.key, Telegram.convertBackFanSpeed(value));
                         break;
                     case FanSpeedMax:
-                        vallox.send(Variable.FAN_SPEED_MAX.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
+                        vallox.send(Variable.FAN_SPEED_MAX.key, Telegram.convertBackFanSpeed(value));
                         break;
                     case FanSpeedMin:
-                        vallox.send(Variable.FAN_SPEED_MIN.key, Telegram.convertBackFanSpeed((byte) (value - 1)));
+                        vallox.send(Variable.FAN_SPEED_MIN.key, Telegram.convertBackFanSpeed(value));
                         break;
                     case DCFanOutputAdjustment:
                         vallox.send(Variable.DC_FAN_OUTPUT_ADJUSTMENT.key, value);
@@ -113,6 +116,45 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                         logger.warn("Trying to send set-command to read-only channel: {} Ignoring.", channelProperty);
                         break;
                 }
+            } else if (command instanceof OnOffType) {
+                switch (channelProperty) {
+                    case PowerState:
+                    case CO2AdjustState:
+                    case HumidityAdjustState:
+                    case HeatingState:
+                        // send the first 4 bits of the Select byte; others are readonly
+                        // 1 1 1 1 1 1 1 1
+                        // | | | | | | | |
+                        // | | | | | | | +- 0 Power state
+                        // | | | | | | +--- 1 CO2 Adjust state
+                        // | | | | | +----- 2 %RH adjust state
+                        // | | | | +------- 3 Heating state
+                        // | | | +--------- 4 Filterguard indicator
+                        // | | +----------- 5 Heating indicator
+                        // | +------------- 6 Fault indicator
+                        // +--------------- 7 service reminder
+                        byte newVal = (byte) (((OnOffType) command == OnOffType.ON) ? 1 : 0);
+                        ValloxStore s = vallox.getValloxStore();
+                        ValloxProperty c = channelProperty;
+                        byte v = 0;
+                        // if the variable to set is the corresponding bit, set it; otherwise get the value from store
+                        // Bit 4
+                        v += (c == ValloxProperty.HeatingState) ? newVal : (s.heatingState ? 1 : 0);
+                        v = (byte) (v << 1);
+                        // Bit 3
+                        v += (c == ValloxProperty.HumidityAdjustState) ? newVal : (s.humidityAdjustState ? 1 : 0);
+                        v = (byte) (v << 1);
+                        // Bit 2
+                        v += (c == ValloxProperty.CO2AdjustState) ? newVal : (s.cO2AdjustState ? 1 : 0);
+                        v = (byte) (v << 1);
+                        // Bit 1
+                        v += (c == ValloxProperty.PowerState) ? newVal : (s.powerState ? 1 : 0);
+                        vallox.send(Variable.SELECT.key, v);
+                    default:
+                        logger.warn("Trying to send set-command to read-only channel: {} Ignoring.", channelProperty);
+                        break;
+                }
+
             }
         } catch (Exception e) {
             logger.error("Failed to handle command to Vallox serial interface: " + e.toString());
@@ -185,13 +227,13 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
             case FaultIndicator:
                 state = getOnOff(vs.faultIndicator);
                 break;
-            case FaultSignalRelay:
+            case FaultSignalRelayClosed:
                 state = getOnOff(vs.faultSignalRelayClosed);
                 break;
             case FilterGuardIndicator:
                 state = getOnOff(vs.filterGuardIndicator);
                 break;
-            case FirePlaceBoosterOn:
+            case FirePlaceBoosterClosed:
                 state = getOnOff(vs.firePlaceBoosterClosed);
                 break;
             case HeatingIndicator:
@@ -301,6 +343,10 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
             return OnOffType.ON;
         }
         return OnOffType.OFF;
+    }
+
+    private static boolean getBoolean(OnOffType t) {
+        return (t == OnOffType.ON);
     }
     // @Override
     // public Thing getThing() {

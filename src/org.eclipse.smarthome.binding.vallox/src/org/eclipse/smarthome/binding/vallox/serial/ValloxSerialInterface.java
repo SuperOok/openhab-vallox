@@ -90,7 +90,20 @@ public class ValloxSerialInterface {
         }
     }
 
+    /**
+     * Send a poll request to the vallox. Denoting the property will request a value update
+     * from the vallox. It will answer with a corresponding telegram with the updated
+     * value. However, this answer is an asynchronous callback and it cannot handle
+     * multiple requests in too short time. It will then only process the latest
+     * request correctly and answer a lot of garbage bytes before that.
+     *
+     * @param prop
+     * @throws IOException
+     */
     public void sendPoll(ValloxProperty prop) throws IOException {
+        if (listenerExecutor == null || listenerExecutor.isTerminated()) {
+            logger.error("Poll requested while no-one is listening for answers!");
+        }
         Variable v = null;
         switch (prop) {
             case AverageEfficiency:
@@ -125,11 +138,11 @@ public class ValloxSerialInterface {
                 v = Variable.IOPORT_MULTI_PURPOSE_1;
                 break;
             case DamperMotorPosition:
-            case FaultSignalRelay:
+            case FaultSignalRelayClosed:
             case SupplyFanOff:
             case PreHeatingOn:
             case ExhaustFanOff:
-            case FirePlaceBoosterOn:
+            case FirePlaceBoosterClosed:
                 v = Variable.IOPORT_MULTI_PURPOSE_2;
                 break;
             case BasicHumidityLevel:
@@ -232,6 +245,9 @@ public class ValloxSerialInterface {
         telegram[4] = value;
         telegram[5] = calculateChecksum(telegram);
 
+        logger.debug("sending telegram: {} {} {} {} {} {}", Telegram.byteToHex(telegram[0]),
+                Telegram.byteToHex(telegram[1]), Telegram.byteToHex(telegram[2]), Telegram.byteToHex(telegram[3]),
+                Telegram.byteToHex(telegram[4]), Telegram.byteToHex(telegram[5]));
         serialWrite(telegram);
     }
 
@@ -284,6 +300,7 @@ public class ValloxSerialInterface {
                 }
             }
         });
+        logger.info("Start listening to vallox telegrams!");
     }
 
     /**
@@ -301,7 +318,8 @@ public class ValloxSerialInterface {
         }
         int domain = inputStream.read();
         if (domain != ValloxProtocol.DOMAIN) {
-            logger.warn("Received Telegram has no Domain byte, ignoring telegram.");
+            logger.warn("Received Telegram has no Domain byte, ignoring telegram: {}",
+                    Telegram.byteToHex((byte) domain));
             return null;
         }
 
@@ -322,6 +340,7 @@ public class ValloxSerialInterface {
         if (receiver == receiverID || receiver == senderID || receiver == ValloxProtocol.ADDRESS_PANELS) {
             return new Telegram((byte) sender, (byte) receiver, (byte) command, (byte) arg);
         }
+        logger.debug("Ignoring telegram not for us: {} {} {} {}", sender, receiver, command, arg);
         return null;
     }
 

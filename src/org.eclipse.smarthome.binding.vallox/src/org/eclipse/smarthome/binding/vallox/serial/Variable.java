@@ -9,7 +9,7 @@ package org.eclipse.smarthome.binding.vallox.serial;
  */
 public enum Variable {
 
-    POLL((byte) 0x09), // poll request for variable in value.
+    POLL((byte) 0x00), // poll request for variable in value.
 
     // 1 1 1 1 1 1 1 1
     // | | | | | | | |
@@ -230,14 +230,14 @@ public enum Variable {
     // +--------------- 7 cascade adjust 0( (byte)off, 1( (byte)on
     PROGRAM((byte) 0xAA),
 
-    // The maintenance counter informs about the next mabyteenance alarm time: remaining months, descending.
+    // The maintenance counter informs about the next maintenance alarm time: remaining months, descending.
     MAINTENANCE_MONTH_COUNTER((byte) 0xAB),
 
     BASIC_HUMIDITY_LEVEL((byte) 0xAE),
-    HRC_BYPASS((byte) 0xAF), // Heat recovery cell bypass setpobyte temp
+    HRC_BYPASS((byte) 0xAF), // Heat recovery cell bypass setpoint temp
     DC_FAN_INPUT_ADJUSTMENT((byte) 0xB0), // 0-100%
     DC_FAN_OUTPUT_ADJUSTMENT((byte) 0xB1), // 0-100%
-    CELL_DEFROSTING((byte) 0xB2), // Defrosting starts when exhaust air drops below this setpobyte temp (Hysteresis 4)
+    CELL_DEFROSTING((byte) 0xB2), // Defrosting starts when exhaust air drops below this setpoint temp (Hysteresis 4)
     CO2_SET_POINT_UPPER((byte) 0xB3),
     CO2_SET_POINT_LOWER((byte) 0xB4),
 
