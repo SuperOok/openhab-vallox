@@ -39,4 +39,11 @@ Configure the serial side as
 12. make sure you create items for all the many channels of the binding
 13. make the items available in some sitemap and you should be able to control the vallox via the OH2 UIs
 
+## Features
 
+The binding currently supports the following Features
+* 14 major properties, some read-only, some writeable
+* 35 advanced properties, so far read-only most of them
+
+Note that there might be more properties that can be read or written which might be not implemented yet. Contributions welcome.
+Also not all channels are perfectly documented.
