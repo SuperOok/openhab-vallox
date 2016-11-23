@@ -7,11 +7,11 @@
 		<relativePath>../pom.xml</relativePath>
 		<groupId>org.eclipse.smarthome.binding.vallox</groupId>
 		<artifactId>org.eclipse.smarthome.binding.vallox.parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>2.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>org.eclipse.smarthome.binding.vallox.target</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>eclipse-target-definition</packaging>
 
 	<groupId>org.eclipse.smarthome.binding.vallox</groupId>
