@@ -31,13 +31,16 @@ Configure the serial side as
 4. it should get picked off by karaf automatically and started
 5. go into karaf console and check: `bundle:list`, it should show a `Vallox` bundle in active state
 6. open paper ui in browser
-7. check that Configuration -> Bindings lists the Vallox binding
-8. go to Configuration -> Things
-9. add Vallox KWL Serial Binding Thing (exactly one)
-10. enter configuration parameters (host and port of serial gateway)
-11. The thing should show status `ONLINE`; if not, go into the details of the thing. The status there should include some error message.
-12. make sure you create items for all the many channels of the binding
+7. Goto Configuration -> System and disable Item Linking Simple mode (so no items will be created automatically)
+8. check that Configuration -> Bindings lists the Vallox binding
+9. go to Configuration -> Things
+10. add Vallox KWL Serial Binding Thing (exactly one)
+11. enter configuration parameters (host and port of serial gateway)
+12. The thing should show status `ONLINE`; if not, go into the details of the thing. The status there should include some error message.
+13. make sure you create items for all the many channels of the binding
   * you can use [demo.items](src/org.eclipse.smarthome.binding.vallox/conf/demo.items) to copy/paste the available items to your own item file
+  * after adding explicit items to your items file, you need to link them to the vallox thing channels in the paper UI (quite tedious work ;( I appreciate any hint on howto do this better)
+  * managing the items manually allows you to correctly reference the items in rules and to group them in groups
 13. make the items available in some sitemap and you should be able to control the vallox via the OH2 UIs
   * you can use [demo.sitemap](src/org.eclipse.smarthome.binding.vallox/conf/demo.sitemap) as an example for a sitemap
 
