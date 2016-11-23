@@ -37,7 +37,9 @@ Configure the serial side as
 10. enter configuration parameters (host and port of serial gateway)
 11. The thing should show status `ONLINE`; if not, go into the details of the thing. The status there should include some error message.
 12. make sure you create items for all the many channels of the binding
+  * you can use [demo.items](src/org.eclipse.smarthome.binding.vallox/conf/demo.items) to copy/paste the available items to your own item file
 13. make the items available in some sitemap and you should be able to control the vallox via the OH2 UIs
+  * you can use [demo.sitemap](src/org.eclipse.smarthome.binding.vallox/conf/demo.sitemap) as an example for a sitemap
 
 ## Features
 
