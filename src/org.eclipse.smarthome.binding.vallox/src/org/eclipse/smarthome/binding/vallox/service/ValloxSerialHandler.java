@@ -3,6 +3,7 @@ package org.eclipse.smarthome.binding.vallox.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import org.eclipse.smarthome.binding.vallox.serial.StatusChangeListener;
 import org.eclipse.smarthome.binding.vallox.serial.Telegram;
 import org.eclipse.smarthome.binding.vallox.serial.ValloxProperty;
 import org.eclipse.smarthome.binding.vallox.serial.ValloxSerialInterface;
@@ -24,7 +25,8 @@ import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValloxSerialHandler extends BaseThingHandler implements ThingHandler, ValueChangeListener {
+public class ValloxSerialHandler extends BaseThingHandler
+        implements ThingHandler, ValueChangeListener, StatusChangeListener {
 
     private Logger logger = LoggerFactory.getLogger(ValloxSerialHandler.class);
     private ValloxSerialInterface vallox;
@@ -38,7 +40,7 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
         logger.info("dispose()");
         if (vallox != null) {
             vallox.stopListening();
-            vallox.getListener().remove(this);
+            vallox.getValueListener().remove(this);
             vallox.close();
             vallox = null;
         }
@@ -55,8 +57,10 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                 String host = (String) configuration.get(ValloxBindingConstants.PARAMETER_HOST);
                 BigDecimal port = (BigDecimal) configuration.get(ValloxBindingConstants.PARAMETER_PORT);
                 vallox.connect(host, port.intValue());
-                vallox.getListener().add(this);
+                vallox.getValueListener().add(this);
+                vallox.getStatusListener().add(this);
                 vallox.startListening();
+                vallox.startHeartbeat();
                 updateStatus(ThingStatus.ONLINE);
             } catch (IOException e) {
                 String message = "Failed to start connection to Vallox serial interface: " + e.toString();
@@ -112,6 +116,13 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                     case CellDefrostingThreshold:
                         vallox.send(Variable.CELL_DEFROSTING.key, Telegram.convertBackTemperature(value));
                         break;
+                    case PowerState:
+                    case CO2AdjustState:
+                    case HumidityAdjustState:
+                    case HeatingState:
+                        logger.warn("Trying to send DecimalType command to OnOffType channel: {} Ignoring.",
+                                channelProperty);
+                        break;
                     default:
                         logger.warn("Trying to send set-command to read-only channel: {} Ignoring.", channelProperty);
                         break;
@@ -151,7 +162,9 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
                         v += (c == ValloxProperty.PowerState) ? newVal : (s.powerState ? 1 : 0);
                         vallox.send(Variable.SELECT.key, v);
                     default:
-                        logger.warn("Trying to send set-command to read-only channel: {} Ignoring.", channelProperty);
+                        logger.warn(
+                                "Trying to send OnOffType set-command to not supported channel; either read-only or other type required: {} Ignoring.",
+                                channelProperty);
                         break;
                 }
 
@@ -336,6 +349,41 @@ public class ValloxSerialHandler extends BaseThingHandler implements ThingHandle
         // TODO: should check whether value really has changed to reduce amount of updates
         this.updateState(channel, state);
         logger.debug("Updated state for channel {} to {}", channel, state);
+    }
+
+    // @Override
+    // public Thing getThing() {
+    // logger.info("getThing");
+    // return null;
+    // }
+    //
+    // @Override
+    // public void thingUpdated(Thing thing) {
+    // logger.info("thingUpdated:"+thing);
+    // }
+    //
+    // @Override
+    // public void handleRemoval() {
+    // logger.info("handleRemoval");
+    // }
+    //
+    // @Override
+    // public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+    // logger.info("handleConfigurationUpdate: "+configurationParameters);
+    // }
+    //
+
+    @Override
+    public void statusChanged(ThingStatus status, ThingStatusDetail detail, String message) {
+        if (message == null) {
+            if (detail == ThingStatusDetail.NONE) {
+                updateStatus(status);
+            } else {
+                updateStatus(status, detail);
+            }
+        } else {
+            updateStatus(status, detail, message);
+        }
     }
 
     private static OnOffType getOnOff(boolean on) {

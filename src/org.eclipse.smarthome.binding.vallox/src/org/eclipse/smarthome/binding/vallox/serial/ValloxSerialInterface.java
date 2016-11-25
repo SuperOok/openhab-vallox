@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.smarthome.binding.vallox.service.ValloxSerialHandler;
+import org.eclipse.smarthome.core.thing.ThingStatus;
+import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ValloxSerialInterface {
 
+    public static int MINUTE = 60000;
+
     private Logger logger = LoggerFactory.getLogger(ValloxSerialHandler.class);
 
     byte senderID = ValloxProtocol.ADDRESS_PANEL8; // we send commands in the name of panel8 (29)
@@ -39,10 +43,15 @@ public class ValloxSerialInterface {
     private InputStream inputStream;
     private Socket socket;
     private ExecutorService listenerExecutor;
+    private ExecutorService heartbeatExecutor;
     private boolean shutdownListening = false;
 
-    private List<ValueChangeListener> listener;
+    private List<ValueChangeListener> vallueListener;
+    private List<StatusChangeListener> statusListener;
     private ValloxStore vallox = new ValloxStore();
+
+    private String host;
+    private int port;
 
     /**
      * Get a bean with all variable states of the vallox installations. Variables
@@ -56,11 +65,18 @@ public class ValloxSerialInterface {
         return vallox;
     }
 
-    public List<ValueChangeListener> getListener() {
-        if (listener == null) {
-            listener = new ArrayList<ValueChangeListener>();
+    public List<ValueChangeListener> getValueListener() {
+        if (vallueListener == null) {
+            vallueListener = new ArrayList<ValueChangeListener>();
         }
-        return listener;
+        return vallueListener;
+    }
+
+    public List<StatusChangeListener> getStatusListener() {
+        if (statusListener == null) {
+            statusListener = new ArrayList<StatusChangeListener>();
+        }
+        return statusListener;
     }
 
     /**
@@ -73,10 +89,21 @@ public class ValloxSerialInterface {
      * @throws IOException
      */
     public void connect(String host, int port) throws UnknownHostException, IOException {
+        this.host = host;
+        this.port = port;
         socket = new Socket(host, port);
         outputStream = socket.getOutputStream();
         inputStream = socket.getInputStream();
         logger.info("Connected to " + host + ":" + port);
+        for (StatusChangeListener l : this.getStatusListener()) {
+            l.statusChanged(ThingStatus.ONLINE, ThingStatusDetail.NONE, null);
+        }
+
+    }
+
+    public void reconnect() throws UnknownHostException, IOException {
+        logger.info("Trying to reconnect: " + host + ":" + port);
+        connect(host, port);
     }
 
     public void close() {
@@ -264,9 +291,18 @@ public class ValloxSerialInterface {
     }
 
     private void serialWrite(byte[] telegram) throws IOException {
-        if (outputStream != null) {
-            outputStream.write(telegram);
-            outputStream.flush();
+        try {
+            if (outputStream != null) {
+                outputStream.write(telegram);
+                outputStream.flush();
+            }
+        } catch (IOException e) {
+            String msg = "Exception writing to vallox: " + e.toString();
+            logger.error(msg);
+            for (StatusChangeListener l : this.getStatusListener()) {
+                l.statusChanged(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, msg);
+            }
+            throw e;
         }
     }
 
@@ -293,14 +329,46 @@ public class ValloxSerialInterface {
                         continue;
                     }
                     logger.trace(telegram.toString());
-                    telegram.updateStore(vallox, listener);
+                    telegram.updateStore(vallox, vallueListener);
                 } catch (Exception e) {
                     logger.error("Exception reading input stream: " + e.toString());
-                    break;
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e1) {
+                        // ignore, simply retry, i.e. wait until reconnected
+                    }
                 }
             }
         });
         logger.info("Start listening to vallox telegrams!");
+    }
+
+    /**
+     * Start a heartbeat thread that regularly polls a vallox variable and
+     * automatically reconnects if it fails.
+     */
+    public void startHeartbeat() {
+        heartbeatExecutor = Executors.newSingleThreadExecutor();
+        heartbeatExecutor.submit(() -> {
+            while (!shutdownListening) {
+                try {
+                    Thread.sleep(MINUTE);
+                    sendPoll(ValloxProperty.SelectStatus);
+                } catch (Exception e) {
+                    String msg = "Exception sending heartbeat poll: " + e.toString();
+                    logger.error(msg);
+                    for (StatusChangeListener l : this.getStatusListener()) {
+                        l.statusChanged(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, msg);
+                    }
+                    try {
+                        this.reconnect();
+                    } catch (IOException e1) {
+                        logger.error("Exception reconnecting vallox: " + e.toString());
+                    }
+                }
+            }
+        });
+        logger.info("Start heartbeat check to vallox!");
     }
 
     /**

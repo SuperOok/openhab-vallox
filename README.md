@@ -51,4 +51,7 @@ The binding currently supports the following Features
 * 35 advanced properties, so far read-only most of them
 
 Note that there might be more properties that can be read or written which might be not implemented yet. Contributions welcome.
-Also not all channels are perfectly documented.
+Also not all channels are perfectly documented. See [thing-types.xml](src\org.eclipse.smarthome.binding.vallox\ESH-INF\thing\thing-types.xml) for details.
+
+* the binding will automatically detect loss of connection (at latest by a heartbeat poll to the vallox every minute)
+* the binding will try to reconnect regularly until connection is re-established
