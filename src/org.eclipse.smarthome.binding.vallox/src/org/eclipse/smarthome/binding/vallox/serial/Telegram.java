@@ -248,7 +248,12 @@ public class Telegram {
 
     public void updateEfficiencies(ValloxStore vallox, Collection<ValueChangeListener> listener) {
         int maxPossible = vallox.tempInside - vallox.tempOutside;
-        if (maxPossible != 0) {
+        if (maxPossible <= 0) {
+            vallox.inEfficiency = 100;
+            vallox.outEfficiency = 100;
+            vallox.averageEfficiency = 100;
+        }
+        if (maxPossible > 0) {
             double inEfficiency = (vallox.tempIncomming - vallox.tempOutside) * 100.0 / maxPossible;
             if (vallox.inEfficiency != (int) inEfficiency) {
                 vallox.inEfficiency = (int) inEfficiency;
