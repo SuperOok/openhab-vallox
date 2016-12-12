@@ -49,7 +49,7 @@ public class ValloxSerialHandler extends BaseThingHandler
     @Override
     public void initialize() {
         logger.info("initialize()");
-        updateStatus(ThingStatus.INITIALIZING);
+        updateStatus(ThingStatus.UNKNOWN);
         if (vallox == null) {
             vallox = new ValloxSerialInterface();
             try {

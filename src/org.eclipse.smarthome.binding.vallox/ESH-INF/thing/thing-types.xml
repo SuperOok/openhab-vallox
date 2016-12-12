@@ -61,7 +61,7 @@
 		<config-description>
 			<parameter name="host" type="text" required="true">
 				<label>Host</label>
-				<description>Host name or IP address of RS483-to-Ethernet gateway. The gateway needs to
+				<description>Host name or IP address of RS485-to-Ethernet gateway. The gateway needs to
             be configured as TCP server and the serial connection to the vallox with 9600 baud, 8-N-1.
             </description>
 				<default>lwip</default>
