@@ -3,8 +3,8 @@
         xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
         xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
 
-    <name>Vallox KWL Serial Binding</name>
-    <description>Binding to a Vallox KWL central venting unit via a RS485-to-Ethernet gateway.</description>
+    <name>Vallox Digit Binding</name>
+    <description>Binding to a Vallox central venting unit via a RS485-to-Ethernet gateway using Vallox Digit protocol.</description>
     <author>Hauke Fuhrmann</author>
 
 </binding:binding>
