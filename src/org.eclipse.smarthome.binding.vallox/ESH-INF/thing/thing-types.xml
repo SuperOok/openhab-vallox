@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
 
-	<thing-type id="kwl90se">
-		<label>Vallox KWL 90SE central venting unit</label>
+	<thing-type id="digit">
+		<label>Vallox Digit protocol</label>
 		<description>Gives access to all sensor values, internal status and control over fans.</description>
 		<channels>
 			<channel id="FanSpeed" typeId="FanSpeed" />
