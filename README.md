@@ -1,3 +1,16 @@
+# NOTE: DISCONTINUED
+
+Please note that this repository is discontinued!
+All development is moved to https://github.com/openhab/openhab2-addons
+and there at addons/binding/org.openhab.binding.vallox.
+
+So this standalone repository is discontinued.
+At the moment I'm in the process of get the first version of the binding officially added to the openhab-addons. I have the first pull request here https://github.com/openhab/openhab2-addons/pull/1560
+
+For the time being, you can obtain the bundle from the pull request from the Eclipse IOT Market Place
+https://marketplace.eclipse.org/content/vallox-central-venting-unit-binding
+
+
 # openhab-vallox
 Interface to a vallox central venting unit.
 
